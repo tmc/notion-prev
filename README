@@ -1,0 +1,6 @@
+notion
+------
+
+A notion.so client for Go.
+
+https://godoc.org/github.com/tmc/notion
