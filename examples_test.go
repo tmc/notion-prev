@@ -13,7 +13,6 @@ func ExampleNewClient() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// do something with projects, don't ignore errors.
 	page, err := c.GetPage(os.Getenv("NOTION_PAGE_ID"))
 	if err != nil {
 		fmt.Println(err)
