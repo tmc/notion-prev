@@ -29,8 +29,8 @@ package notiontypes
 // RecordMap contains a collections of blocks, a space, users, and collections.
 type RecordMap struct {
 	Blocks          map[string]*BlockWithRole          `json:"block"`
-	Space           map[string]interface{}             `json:"space"` // TODO: figure out the type
-	Users           map[string]*notionUserInfo         `json:"notion_user"`
+	Space           map[string]*SpaceWithRole          `json:"space"`
+	Users           map[string]*UserWithRole           `json:"notion_user"`
 	Collections     map[string]*CollectionWithRole     `json:"collection"`
 	CollectionViews map[string]*CollectionViewWithRole `json:"collection_view"`
 }
@@ -118,7 +118,8 @@ type CollectionColumnOption struct {
 	Value string `json:"value"`
 }
 
-type notionUserInfo struct {
+// UserWithRole holds a user's role associated with a user as well as a user.
+type UserWithRole struct {
 	Role  string `json:"role"`
 	Value *User  `json:"value"`
 }
