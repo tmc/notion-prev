@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	testPageSimple = "aa8fc12667704e83ad6c3968dcfc9b82"
+	testPageSimple = "aa8fc126-6770-4e83-ad6c-3968dcfc9b82"
 )
 
 func ExampleNewClient() {
@@ -19,10 +19,13 @@ func ExampleNewClient() {
 	page, err := c.GetPage(testPageSimple)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-	fmt.Println(page.RecordMap.Blocks[testPageSimple].Value.Type)
+	fmt.Println(page.Type)
+	fmt.Println(page.Title)
 	// output:
 	// page
+	// le-title
 }
 
 func ExampleNewClient_authenticated() {
