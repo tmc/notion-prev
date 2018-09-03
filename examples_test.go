@@ -1,7 +1,6 @@
 package notion_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -21,19 +20,20 @@ func ExampleNewClient() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	json.NewEncoder(os.Stdout).Encode(page)
+	fmt.Println(page.RecordMap.Blocks[testPageSimple].Value.Type)
 	// output:
-	// .
+	// page
 }
 
 func ExampleNewClient_authenticated() {
 	token := os.Getenv("NOTION_TOKEN")
-	c, err := notion.NewClient(notion.WithToken(token), notion.WithDebugLogging)
-	if err != nil {
-		fmt.Println(err)
-	}
-	_, err = c.GetPage(os.Getenv("NOTION_PAGE_ID"))
-	fmt.Println(err)
-	// output:
-	// <nil>
+	client, err := notion.NewClient(notion.WithToken(token), notion.WithDebugLogging())
+
+	_, _ = client, err
+}
+
+func ExampleWithDebugLogging() {
+	client, err := notion.NewClient(notion.WithDebugLogging())
+
+	_, _ = client, err
 }

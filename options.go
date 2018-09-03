@@ -40,8 +40,10 @@ func WithLogger(logger Logger) ClientOption {
 }
 
 // WithDebugLogging attaches a debug-level logger to the client.
-var WithDebugLogging ClientOption = func(c *Client) {
-	logger := logrus.New()
-	logger.SetLevel(logrus.DebugLevel)
-	c.logger = &WrapLogrus{logger}
+func WithDebugLogging() ClientOption {
+	return func(c *Client) {
+		logger := logrus.New()
+		logger.SetLevel(logrus.DebugLevel)
+		c.logger = &WrapLogrus{logger}
+	}
 }
