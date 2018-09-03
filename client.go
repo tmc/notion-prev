@@ -88,6 +88,39 @@ func (c *Client) do(method string, body io.Reader, pattern string, args ...inter
 	return buf, nil
 }
 
+type getRecordValuesRequest struct {
+	Requests []Record `json:"requests,omitempty"`
+}
+
+type getRecordValuesResponse struct {
+	Results []*notiontypes.BlockWithRole `json:"results"`
+}
+
+// Record describes a type of notion.no entity.
+//
+// Example: block1 := Record{Table:"block","ID":"aa8fc12667704e83ad6c3968dcfc9b82"}
+type Record struct {
+	ID    string `json:"id"`
+	Table string `json:"table"`
+}
+
+// GetRecordValues returns details about the given record types.
+func (c *Client) GetRecordValues(records ...Record) ([]*notiontypes.BlockWithRole, error) {
+	gr := getRecordValuesRequest{
+		Requests: records,
+	}
+	r := &getRecordValuesResponse{}
+	b, err := c.post(gr, "getRecordValues")
+	if err != nil {
+		return nil, err
+	}
+	c.logger.Debugln(string(b))
+	if err := json.Unmarshal(b, r); err != nil {
+		return nil, errors.Wrap(err, "unmarshaling getRecordValuesResponse")
+	}
+	return r.Results, nil
+}
+
 type loadPageChunkRequest struct {
 	PageID          string `json:"pageId"`
 	Limit           int64  `json:"limit,omitempty"`
@@ -120,6 +153,7 @@ func (c *Client) GetPage(pageID string) (*Page, error) {
 		if err := json.Unmarshal(b, r); err != nil {
 			return nil, errors.Wrap(err, "unmarshaling loadPageChunkResponse")
 		}
+
 		results = append(results, r.RecordMap)
 		lp.Cursor = r.Cursor
 		if len(r.Cursor.Stack) == 0 {

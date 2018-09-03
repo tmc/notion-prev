@@ -13,6 +13,7 @@ var (
 
 func ExampleNewClient() {
 	c, err := notion.NewClient()
+	//c, err := notion.NewClient(notion.WithDebugLogging())
 	if err != nil {
 		fmt.Println(err)
 	}
