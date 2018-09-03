@@ -104,6 +104,7 @@ func (c *Client) GetPage(pageID string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.logger.Debugln(string(b))
 	result := &Page{}
 	return result, json.Unmarshal(b, result)
 }
