@@ -9,24 +9,25 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const defaultBaseURL = "https://www.notion.so/api/v3/"
 
 // Client is the primary type that implements an interface to the notion.so API.
 type Client struct {
-	client  *http.Client
 	baseURL string
 	token   string
+	client  *http.Client
+	logger  Logger
 }
 
 // NewClient initializes a new Client.
-func NewClient(token string, opts ...ClientOption) (*Client, error) {
+func NewClient(opts ...ClientOption) (*Client, error) {
 	c := &Client{
-		token:   token,
 		baseURL: defaultBaseURL,
+		logger:  &WrapLogrus{logrus.New()},
 	}
-
 	for _, o := range opts {
 		o(c)
 	}
@@ -49,7 +50,7 @@ func (c *Client) post(payload interface{}, pattern string, args ...interface{}) 
 	if err := json.NewEncoder(buf).Encode(payload); err != nil {
 		return nil, err
 	}
-	fmt.Println(string(buf.Bytes()))
+	c.logger.Debugln(string(buf.Bytes()))
 	return c.do("POST", buf, pattern, args...)
 }
 
@@ -83,24 +84,19 @@ func (c *Client) do(method string, body io.Reader, pattern string, args ...inter
 	return buf, nil
 }
 
-type cursor struct {
-	Stack []interface{} `json:"stack"`
-}
 type loadPageChunkRequest struct {
 	PageID          string `json:"pageId,omitempty"`
 	Limit           int64  `json:"limit,omitempty"`
-	Cursor          cursor `json:"cursor"`
+	Cursor          Cursor `json:"cursor"`
 	VerticalColumns bool   `json:"verticalColumns"`
 }
-
-type Page map[string]interface{}
 
 // GetPage returns a Page given an id.
 func (c *Client) GetPage(pageID string) (*Page, error) {
 	lp := loadPageChunkRequest{
 		PageID: pageID,
 		Limit:  50,
-		Cursor: cursor{
+		Cursor: Cursor{
 			Stack: []interface{}{},
 		},
 	}
