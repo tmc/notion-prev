@@ -24,7 +24,7 @@ func (v *vimPrinter) w(s string) {
 }
 
 func (v *vimPrinter) print(block *notiontypes.Block) error {
-	v.W(fmt.Sprintf("%v %v {{{", block.Type, block.ID))
+	v.W(fmt.Sprintf("%v %v %v {{{", block.Title, block.Type, block.ID))
 	v.incIndent()
 	//spew.Dump(block)
 	for _, b := range block.InlineContent {

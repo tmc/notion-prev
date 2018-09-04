@@ -26,7 +26,9 @@ func main() {
 }
 
 func run(id string) error {
-	opts := []notion.ClientOption{}
+	opts := []notion.ClientOption{
+		notion.WithToken(os.Getenv("NOTION_TOKEN")),
+	}
 	if *flagVerbose {
 		opts = append(opts, notion.WithDebugLogging())
 	}
@@ -37,6 +39,9 @@ func run(id string) error {
 	pageInfo, err := c.GetRecordValues(notion.Record{Table: "block", ID: id})
 	if err != nil {
 		return err
+	}
+	if pageInfo[0].Value == nil {
+		return fmt.Errorf("issue fetching content, Role=%v", pageInfo[0].Role)
 	}
 	p, err := c.GetPage(pageInfo[0].Value.ID)
 	if err != nil {
